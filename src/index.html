@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Export your Last.fm listening history.">
+  <title>Last.fm Library Exporter</title>
+  <link rel="stylesheet" href="/style.css">
+  <script type="module" src="/client.js"></script>
+</head>
+<body>
+  <header>
+    <div class="bar">
+      <div class="wrap"><span class="brand">Last.fm Library Exporter</span></div>
+    </div>
+    <div class="hero">
+      <div class="wrap">
+        <h1>Library exporter</h1>
+        <p>Download your scrobbles, charts, and loved tracks.</p>
+      </div>
+    </div>
+  </header>
+  <main class="wrap">
+    <form id="export-form">
+      <fieldset class="panel types">
+        <legend>What to export</legend>
+        <label><input type="radio" name="kind" value="scrobbles" checked> Scrobbles</label>
+        <label><input type="radio" name="kind" value="artists"> Artists</label>
+        <label><input type="radio" name="kind" value="albums"> Albums</label>
+        <label><input type="radio" name="kind" value="tracks"> Tracks</label>
+        <label><input type="radio" name="kind" value="loved"> Loved tracks</label>
+      </fieldset>
+      <div class="grid">
+        <fieldset class="panel">
+          <legend>Date range</legend>
+          <label for="range">Period</label>
+          <select id="range">
+            <option value="all">All time</option>
+            <option value="7">Last 7 days</option>
+            <option value="30">Last 30 days</option>
+            <option value="90">Last 90 days</option>
+            <option value="180">Last 180 days</option>
+            <option value="365">Last 365 days</option>
+            <option value="custom">Custom range</option>
+          </select>
+          <div id="custom" class="dates" hidden>
+            <label>From<input id="from" type="date"></label>
+            <label>To<input id="to" type="date"></label>
+          </div>
+          <p class="muted" id="date-help">Dates use your browser’s time zone.</p>
+        </fieldset>
+        <fieldset class="panel">
+          <legend>Filter by artist</legend>
+          <p id="artist-filter-status" class="artist-filter-status" role="status">Export includes all artists. Select artists to narrow it down.</p>
+          <label for="search">Search for artists to include</label>
+          <input type="search" id="search" placeholder="Type an artist name" autocomplete="off" disabled>
+          <div class="choices" id="choices" hidden></div>
+          <details class="paste-artists">
+            <summary>Paste an artist list</summary>
+            <label for="artist-list">Artist names</label>
+            <textarea id="artist-list" rows="4" aria-describedby="paste-help" disabled></textarea>
+            <p class="muted" id="paste-help">Use one name per line or separate names with commas.</p>
+            <button type="button" id="match-artists" disabled>Add matching artists</button>
+            <p id="match-status" role="status"></p>
+          </details>
+          <div id="selected" class="chips"></div>
+          <button type="button" id="clear-artists" hidden>Clear selected artists</button>
+          <div class="sync"><span id="artist-status" role="status">The first sync imports your all-time artists. Later syncs check new plays.</span><button type="button" id="sync">Sync artists</button></div>
+        </fieldset>
+      </div>
+      <fieldset class="panel download">
+        <legend>Download</legend>
+        <div class="controls">
+          <label>File format<select id="format"><option value="csv">CSV</option><option value="json">JSON</option></select></label>
+          <button type="submit" name="action" value="preview">Preview</button>
+          <button type="submit" name="action" value="download" class="primary">Download export</button>
+          <button type="button" id="cancel" hidden>Cancel</button>
+        </div>
+        <p id="status" role="status" aria-live="polite"></p>
+        <div class="table-wrap" id="preview" hidden></div>
+      </fieldset>
+    </form>
+    <details><summary>How full-history exports work</summary><p>Last.fm returns up to 200 scrobbles per request. Large exports fetch every page and may take several minutes. Keep this tab open while the export runs. The exporter retries temporary errors and will report a failed page before offering a download. Artist, album, and track counts are calculated from the scrobbles matching your filters.</p><a href="https://www.last.fm/api/show/user.getRecentTracks">Last.fm API documentation</a></details>
+  </main>
+</body>
+</html>
